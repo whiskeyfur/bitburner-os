@@ -1,0 +1,83 @@
+{
+  "places": {
+    "Aevum": {
+      "AeroCorp" : { "type" : "company"},
+      "Bachman & Associates": { "type" : "company"},
+      "Clarke Incorporated" : { "type" : "company"},
+      "Crush Fitness Gym" : {"type": "gym"},
+      "ECorp" : { "type" : "company"},
+      "Fulcrum Technologies" : { "type" : "company"},
+      "Galactic Cybersystems" : { "type" : "company"},
+      "NetLink Technologies" : { "type" : "company"},
+      "Aevum Police Headquarters" : { "type" : "company"},
+      "Rho Construction" : { "type" : "company"},
+      "Snap Fitness Gym" : {"type": "gym"},
+      "Summit University" : {"type" : "university"},
+      "Watchdog Security" : { "type" : "company"},
+      "Iker Molina Casino" : { "type" : "casino"}
+    },
+    "Chongqing" : {
+      "KuaiGong International" : {"type" : "company"},
+      "Solaris Space Systems" : {"type" : "company"},
+      "Church of the Machine God" : {"type" : "company"}
+    }, 
+    "Ishima" : {
+      "Nova Medical" : {"type" : "company"},
+      "Omega Software" : {"type" : "company"},
+      "Storm Technologies" : {"type" : "company"}
+    },
+    "New Tokyo" : {
+      "DefComm" : {"type" : "company"},
+      "Global Pharmaceuticals" : {"type" : "company"},
+      "Noodle Bar" : {"type" : "company"},
+      "VitaLife" : {"type" : "company"}
+    },
+    "Sector 12" : {
+      "Alpha Enterprises" : {"type" : "company"},
+      "Blade Industries" : {"type" : "company"},
+      "Central Intelligence Agency" : {"type" : "company"},
+      "Carmichael Security" : {"type" : "company"},
+      "Sector-12 City Hall" : {"type" : "company"},
+      "DeltaOne" : {"type" : "company"},
+      "FoodNStuff" : {"type" : "company"},
+      "Four Sigma" : {"type" : "company"},
+      "Icarus Microsystems" : {"type" : "company"},
+      "Iron Gym" : {"type": "gym"},
+      "Joe's Guns" : {"type" : "company"},
+      "MegaCorp" : {"type" : "company"},
+      "National Security Agency" : {"type" : "company"},
+      "Powerhouse Gym" : {"type": "gym"},
+      "Rothman University" : {"type" : "university"},
+      "Universal Energy" : {"type" : "company"}
+    },
+    "Volhaven" : {
+      "CompuTek" : {"type" : "company"},
+      "Helios Labs" : {"type" : "company"},
+      "LexoCorp" : {"type" : "company"},
+      "Millenium Fitness Gym" : {"type": "gym"},
+      "NWO" : {"type" : "company"},
+      "OmniTek Incorporated" : {"type" : "company"},
+      "Omnia Cybersystems" : {"type" : "company"},
+      "SysCore Securities" : {"type" : "company"},
+      "ZB Institute of Technology" : {"type" : "university"}
+    },
+    "generic" : {
+      "Hospital" : {"type" : "company"},
+      "The Slums" : {"type" : "company"},
+      "Travel Agency" : {"type" : "company"},
+      "World Stock Exchange" : {"type" : "company"}
+    }
+  },
+  "classes" : [
+    "study computer science" ,
+    "data structures" ,
+    "networks" ,
+    "algorithms",
+    "management",
+    "leadership"
+  ],
+  "factions" : {
+    
+  }
+  
+}
