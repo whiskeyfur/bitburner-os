@@ -6,7 +6,8 @@ export async function main(ns) {
         for (var f of files) {
             if (f.startsWith("cron-")) {
                 if (ns.getServerMaxRam(ns.getHostname()) - ns.getServerUsedRam(ns.getHostname()) >= ns.getScriptRam(f))  {
-                    try {await jcw.execAndWait(ns, f, ns.getHostname());} catch {}
+                    if (!ns.scriptRunning(f, ns.getHostname()))
+                    ns.exec(f, ns.getHostname());
                 }
             }
         }
