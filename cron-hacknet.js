@@ -20,7 +20,10 @@ export async function main(ns) {
         }
     }
     var cost = ns.hacknet.getPurchaseNodeCost();
-    if (ns.hacknet.getPurchaseNodeCost() < ns.getPlayer().money / 20) {
+    if (
+        ns.hacknet.getPurchaseNodeCost() < ns.getPlayer().money / 20 &&
+        ns.hacknet.numNodes < 15
+    ) {
         //ns.tprint("Buying hacknet node for $" + cost.toFixed(2))
         ns.hacknet.purchaseNode();
     }

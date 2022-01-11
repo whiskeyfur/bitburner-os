@@ -1,8 +1,47 @@
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     if (ns.getPlayer().hasTixApiAccess) {
-        if (ns.getPlayer().has4SDataTixApi) {
+        if (ns.getPlayer().has4SDataTixApi) {        
+            ns.tail();
+            ns.clearLog();
+            var symbols = ns.stock.getSymbols()
+            .sort((a,b) => ns.stock.getForecast(a) - ns.stock.getForecast(b));
             
+            for (var sym of symbols) {
+                var pos = ns.stock.getPosition(sym);
+                var stk = ns.stock.getMaxShares(sym) * 0.01;
+                var forecast = ns.stock.getForecast(sym);
+                var price = ns.stock.getPrice(sym);
+                if (forecast > 0.55 && pos[0] < stk) {
+                    if (((stk - pos[0]) * price + 100000) < (ns.getPlayer().money / 20)) {
+                        ns.stock.buy(sym, stk - pos[0]);
+                        ns.tprint("Buying " + (stk - pos[0]) + " shares of " + sym + " at the cost of " + (price * (stk - pos[0]) + 100000))
+                    }
+                } else if (forecast < 0.5 && pos[0]) {
+                    ns.stock.sell(sym, pos[0]);
+                    ns.tprint("Selling " + pos[0] + " shares of " + sym + " for a profit of " + (pos[1] * price - 100000));
+                }
+
+                var pos = ns.stock.getPosition(sym);
+                var price = ns.stock.getPrice(sym);
+                if (pos[0]) {
+                    ns.print(
+                        sym.padStart(6) 
+                        + " "
+                        + pos[0].toFixed(0).padStart(7)
+                        + " @ " 
+                        + price.toFixed(2).padStart(8)
+                        + " = "
+                        + ns.nFormat(pos[0] * price, "0a").padStart(5)
+                        + " (" 
+                        + (price / pos[1] * 100).toFixed(0)
+                        + "%)"
+
+    
+                    )
+                }
+
+            }
         }
     }
 }

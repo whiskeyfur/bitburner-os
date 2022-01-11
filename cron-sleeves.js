@@ -1,5 +1,6 @@
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
+    ns.tail();
     for (var i = 0; i < ns.sleeve.getNumSleeves(); i++) {
         var stats = ns.sleeve.getSleeveStats(i);
         var task = ns.sleeve.getTask(i)
@@ -9,12 +10,6 @@ export async function main(ns) {
         } else if (stats.sync < 100) {
             if (task.task != "Synchro")
             ns.sleeve.setToSynchronize(i);
-        } else if (stats.str < 50) {
-            if (task.task != "Gym")
-            ns.sleeve.setToGymWorkout(i, "iron gym", "str");
-        } else {
-            if (task.task != "Mug")
-            ns.sleeve.setToCommitCrime(i, "Mug")
         }
         
         var augs = ns.sleeve.getSleevePurchasableAugs(i).length;

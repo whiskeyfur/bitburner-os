@@ -8,7 +8,6 @@ export async function main(ns) {
 
     var workers = (await Servers.getServers(ns))
     .filter(s => ns.hasRootAccess(s))
-    .filter(s => s != "home")
     .sort((a,b) => 
         (ns.getServerMaxRam(b) - ns.getServerUsedRam(b)) -
         (ns.getServerMaxRam(a) - ns.getServerUsedRam(a))
@@ -62,7 +61,7 @@ export async function main(ns) {
 
     for (var t of targets) {
         var threadsNeeded = Math.max(ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.05), 1)
-        var memAvail = ns.getServerMaxRam(w) - ns.getServerUsedRam(w);
+        var memAvail = ns.getServerMaxRam(w) - (w == "home" ? 128 : 0) - ns.getServerUsedRam(w);
         for (var w of workers) {
             for (var ps of ns.ps(w)) {
                 if (ps.filename == "cmd-hack.js" && ps.args[0] == t) 
@@ -82,7 +81,7 @@ function incomePerSec(ns, s) {
 /** @param {import(".").NS} ns **/
 function distribute(ns, workers, script, threadsNeeded, target) {
     for (var w of workers) {
-        var memAvail = ns.getServerMaxRam(w) * (w == "home" ? 0 : 1) - ns.getServerUsedRam(w);
+        var memAvail = ns.getServerMaxRam(w) - (w == "home" ? 64 : 0) - ns.getServerUsedRam(w);
         var threads = Math.max(Math.min(Math.floor(memAvail / ns.getScriptRam(script)), threadsNeeded),1);
         if ((threadsNeeded > 0) && (memAvail > ns.getScriptRam(script))) {
             if (ns.exec(script, w, threads, target)) {
