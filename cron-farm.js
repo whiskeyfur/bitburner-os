@@ -43,7 +43,7 @@ export async function main(ns) {
     .filter(s => ns.getServerMoneyAvailable(s) < ns.getServerMaxMoney(s));
 
     for (var t of targets) {
-        var threadsNeeded = ns.growthAnalyze(t, ns.getServerMaxMoney(t) - ns.getServerMoneyAvailable(t))
+        var threadsNeeded = ns.growthAnalyze(t, ns.getServerMaxMoney(t) / ns.getServerMoneyAvailable(t))
         for (var w of workers) {
             for (var ps of ns.ps(w)) {
                 if (ps.filename == "cmd-grow.js" && ps.args[0] == t) 
@@ -57,11 +57,11 @@ export async function main(ns) {
     targets = (await Servers.getServers(ns))
     .filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
     .filter(s => ns.getServerMaxMoney(s))
-    .filter(s => ns.getServerMoneyAvailable(s) > ns.getServerMaxMoney(s) * 0.90)
-    .sort((a,b) => (ns.getServerMoneyAvailable(b) / ns.hackAnalyze(b))-(ns.getServerMoneyAvailable(a) / ns.hackAnalyze(a)));
+    .filter(s => ns.getServerMoneyAvailable(s) > ns.getServerMaxMoney(s) * 0.95)
+    .sort((a,b) => (ns.getServerMoneyAvailable(b) * ns.hackAnalyze(b))-(ns.getServerMoneyAvailable(a) * ns.hackAnalyze(a)));
 
     for (var t of targets) {
-        var threadsNeeded = ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.25)
+        var threadsNeeded = Math.max(ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.05), 1)
         var memAvail = ns.getServerMaxRam(w) - ns.getServerUsedRam(w);
         for (var w of workers) {
             for (var ps of ns.ps(w)) {
