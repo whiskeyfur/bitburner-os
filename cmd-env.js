@@ -1,16 +1,15 @@
+import * as pmem from "./lib-pmem.js"
+
 /** @param {import("..").NS} ns **/
 export async function main(ns) {
-    ns.tprint("starting...")
-    if (!ns.args.length) {
-        
-    } else {
-        switch(ns.args[0]) {
-            case "build":
-                build_env(ns);
-                break;
-        }
-    }
-    ns.tprint("done")
+    await pmem.set(ns, "autorun.farm", true) 
+    await pmem.set(ns, "autorun.gangs", true) 
+    await pmem.set(ns, "autorun.hacknet", true) 
+    await pmem.set(ns, "autorun.root", true) 
+    await pmem.set(ns, "autorun.servers", true)
+    await pmem.set(ns, "autorun.sleeves", true)
+    await pmem.set(ns, "autorun.solver", true)
+    await pmem.set(ns, "autorun.stocks", true)
 }
 
 export function build_env(ns) {

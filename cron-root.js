@@ -17,5 +17,4 @@ export async function main(ns) {
             try {ns.installBackdoor(svr)} catch {};
         }
     }
-
 }
