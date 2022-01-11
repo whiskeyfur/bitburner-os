@@ -12,6 +12,7 @@ export async function main(ns) {
         .filter(s => ns.getServerMoneyAvailable(s))
         .filter(s => ns.getServerMaxMoney(s))
         .filter(s => ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(s))
+        .sort((a,b) => (ns.getServerMoneyAvailable(b) * ns.hackAnalyze(b) * ns.hackAnalyzeChance(b)) - (ns.getServerMoneyAvailable(a) * ns.hackAnalyze(a) * ns.hackAnalyzeChance(a)))
         .forEach(s => 
             ns.print(
                 s.padStart(18) 
@@ -23,6 +24,8 @@ export async function main(ns) {
                 + " W: " + find(ns, s, servers, "cmd-weaken.js").toFixed(0).padStart(4)
                 + "  G: " + find(ns, s, servers, "cmd-grow.js").toFixed(0).padStart(4)
                 + "  H: " + find(ns, s, servers, "cmd-hack.js").toFixed(0).padStart(4)
+                + " -- " + ns.nFormat(ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) * ns.hackAnalyzeChance(s), "0a").padStart(6)
+                + "/sec"
             )
         )
         await ns.sleep(1000)
