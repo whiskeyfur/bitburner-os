@@ -16,12 +16,13 @@ export async function getServers(ns) {
 
 /** @param {import(".").NS} ns **/
 export async function workers(ns) {
-    return getServers.filter(s => ns.hasRootAccess(s))
+    return await getServers(ns)
+    .filter(s => ns.hasRootAccess(s))
 }
 
 /** @param {import(".").NS} ns **/
 export async function targets(ns) {
-    return getServers
+    return await getServers(ns)
     .filter(s => ns.getServerMoneyAvailable(s))
     .filter(s => ns.getServerRequiredHackingLevel(s) < ns.getHackingLevel(s))
 }

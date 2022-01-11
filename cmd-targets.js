@@ -9,7 +9,14 @@ export async function main(ns) {
   .filter(s => incomePerSecond(ns, s))
   .forEach(s => 
     ns.tprint(
-      s.padStart(18) + " -- " + ns.nFormat(incomePerSecond(ns, s) * 60, "0.00a") + "/min"
+      s.padStart(18) 
+      + " -- "
+      + ns.nFormat(ns.getServerMoneyAvailable(s), "0a").padStart(6)
+      + " / "
+      + ns.nFormat(ns.getServerMaxMoney(s), "0a").padStart(6)
+      + " -- " 
+      + ns.nFormat(incomePerSecond(ns, s) * 60, "0.00a") 
+      + "/min"
     )
   )
 }
