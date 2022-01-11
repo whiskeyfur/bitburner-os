@@ -2,12 +2,16 @@
 export async function main(ns) {
     for (var i = 0; i < ns.sleeve.getNumSleeves(); i++) {
         var stats = ns.sleeve.getSleeveStats(i);
+        var task = ns.sleeve.getTask(i)
+        //ns.tprint(task)
         if (stats.shock) {
             ns.sleeve.setToShockRecovery(i);
         } else if (stats.sync < 100) {
+            if (task.task != "Synchro")
             ns.sleeve.setToSynchronize(i);
-        } else if (stats.hacking < 100) {
-            ns.sleeve.setToUniversityCourse(i, "rothman university", "Study computer science")
+        } else {
+            if (task.task != "Mug")
+            ns.sleeve.setToCommitCrime(i, "Mug")
         }
         
         var augs = ns.sleeve.getSleevePurchasableAugs(i).length;
