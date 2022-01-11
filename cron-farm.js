@@ -58,7 +58,7 @@ export async function main(ns) {
     .filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
     .filter(s => ns.getServerMaxMoney(s))
     .filter(s => ns.getServerMoneyAvailable(s) > ns.getServerMaxMoney(s) * 0.95)
-    .sort((a,b) => (ns.getServerMoneyAvailable(b) * ns.hackAnalyze(b))-(ns.getServerMoneyAvailable(a) * ns.hackAnalyze(a)));
+    .sort((a,b) => (ns.getServerMoneyAvailable(b) * ns.hackAnalyze(b) * ns.hackAnalyzeChance(b))-(ns.getServerMoneyAvailable(a) * ns.hackAnalyze(a) * ns.hackAnalyzeChance(a)));
 
     for (var t of targets) {
         var threadsNeeded = Math.max(ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.05), 1)
