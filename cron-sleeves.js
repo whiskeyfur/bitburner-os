@@ -10,7 +10,7 @@ export async function main(ns) {
             if (task.task != "Synchro")
             ns.sleeve.setToSynchronize(i);
         } else if (stats.str < 50) {
-            if (task.task != "Synchro")
+            if (task.task != "Gym")
             ns.sleeve.setToGymWorkout(i, "iron gym", "str");
         } else {
             if (task.task != "Mug")
