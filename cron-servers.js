@@ -19,7 +19,7 @@ export async function main(ns) {
                 ns.killall(server);
                 ns.deleteServer(server);
                 var host = ns.purchaseServer("private", ram * 2);
-                ns.tprint("Replaced '" + server + "' with '" + host + "' and " + (ram * 2)  + " gb of ram")
+                ns.tprint("Replaced '" + server + "' (" + ram+ " GB) with '" + host + "' (" + (ram * 2)+ " GB)")
             }
         }
     }
