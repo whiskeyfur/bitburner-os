@@ -1,6 +1,5 @@
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
-    ns.tail();
     for (var i = 0; i < ns.sleeve.getNumSleeves(); i++) {
         var stats = ns.sleeve.getSleeveStats(i);
         var task = ns.sleeve.getTask(i)
@@ -22,7 +21,4 @@ export async function main(ns) {
             }
         }
     }
-}
-export async function autocomplete(data, args) {
-    
 }
