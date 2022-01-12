@@ -13,7 +13,7 @@ export async function main(ns) {
                 if (forecast > 0.50 && pos[0] < stk) {
                     if (((stk - pos[0]) * price + 100000) < (ns.getPlayer().money / 20)) {
                         ns.stock.buy(sym, stk - pos[0]);
-                        ns.tprint("Buying " + (stk - pos[0]) + " shares of " + sym + " at the cost of " + ns.nFormat((price * (stk - pos[0]) + 100000, "0a")))
+                        ns.tprint("Buying " + (stk - pos[0]) + " shares of " + sym + " at the cost of " + ns.nFormat(price * (stk - pos[0]) + 100000, "0a"))
                     }
                 } else if (forecast < 0.5 && pos[0]) {
                     ns.stock.sell(sym, pos[0]);

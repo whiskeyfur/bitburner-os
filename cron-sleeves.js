@@ -10,15 +10,5 @@ export async function main(ns) {
             if (task.task != "Synchro")
             ns.sleeve.setToSynchronize(i);
         }
-        
-        var augs = ns.sleeve.getSleevePurchasableAugs(i).length;
-        if (ns.sleeve.getSleevePurchasableAugs(i).length) {
-            for (var aug in augs) {
-                if (ns.getAugmentationPrice(aug) < ns.getPlayer().money / 20) {
-                    ns.sleeve.purchaseSleeveAug(i, aug);
-                    ns.tprint("installing " + aug + " on sleeve #" + i)
-                }
-            }
-        }
     }
 }

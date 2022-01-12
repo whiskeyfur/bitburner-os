@@ -9,6 +9,6 @@ export async function main(ns) {
                 var pid = ns.exec(f, ns.getHostname());        
             }
         });
-        await ns.sleep(500);
+        await ns.sleep(1500);
     }
 }

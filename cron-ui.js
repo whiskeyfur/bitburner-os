@@ -20,10 +20,13 @@ export async function main(ns) {
         var usedMemory = 0;
         (await lib.getServers(ns))
         .filter(s => ns.hasRootAccess(s))
-        .filter(s => s != "home")
         .map(s => {
-            totalMemory += ns.getServerMaxRam(s);
-            usedMemory += ns.getServerUsedRam(s);
+            totalMemory += ns.getServerMaxRam(s) - (s == "home" ? 256 : 0);
+            for (var ps of ns.ps(s)) {
+                if (ps.filename.startsWith("cmd-"))
+                    usedMemory += ns.getScriptRam(ps.filename, s) * ps.threads;
+            }
+            
         });
 
 
@@ -34,7 +37,6 @@ export async function main(ns) {
         headers.push("- Used");
         values.push(usedMemory.toFixed(2));
 
-        /*
         var shock = 0;
         var sync = 0;
         for (var i = 0; i < ns.sleeve.getNumSleeves(); i++) {
@@ -48,12 +50,13 @@ export async function main(ns) {
 
         headers.push("Sync");
         values.push(sync.toFixed(2));
-        */
         
         // Now drop it into the placeholder elements
         hook0.innerText = headers.join("\n");
         hook0.style.paddingRight = "1em";
         hook1.innerText = values.join("\n");
+
+        
     } catch (err) { // This might come in handy later
         ns.tprint("ERROR: Update Skipped: " + String(err));
     }
