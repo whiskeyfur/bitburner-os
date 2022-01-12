@@ -19,7 +19,6 @@ export async function main(ns) {
 
         // weaken
         var targets = (await Servers.getServers(ns))
-        .filter(s => ns.getServerMaxMoney(s))
         .filter(s => ns.getServerMoneyAvailable(s)) // zero servers are quite dead. You can't grow those.
         .filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
         /*
