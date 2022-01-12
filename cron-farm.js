@@ -31,24 +31,29 @@ export async function main(ns) {
         ;
         var limiter = 2;
         for (var t of targets) {
+            var hackThreadsNeeded = 0
+            var growThreadsNeeded = 0
+            var weakenThreadsNeeded = 0
             
-            var hackThreadsNeeded   = ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.05)
+            if (ns.hasRootAccess(t)) {}
+                hackThreadsNeeded   = ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.05)
 
-            if (ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel()) {
-                hackThreadsNeeded = 0; // we can't hack this server
-                //growThreadsNeeded = Math.max(growThreadsNeeded, 100) // cap at 100
+                if (ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel()) {
+                    hackThreadsNeeded = 0; // we can't hack this server
+                    //growThreadsNeeded = Math.max(growThreadsNeeded, 100) // cap at 100
+                }
+
+                growThreadsNeeded   = ns.growthAnalyze(t, ns.getServerMaxMoney(t) / (ns.getServerMoneyAvailable(t)))
+                
+                weakenThreadsNeeded = (
+                    ns.getServerSecurityLevel(t) 
+                    - ns.getServerMinSecurityLevel(t)
+                    + ns.growthAnalyzeSecurity(growThreadsNeeded) * ns.getWeakenTime(t) / ns.getGrowTime(t)
+                    + ns.hackAnalyzeSecurity(hackThreadsNeeded)   * ns.getWeakenTime(t) / ns.getHackTime(t)
+                    + 1
+                ) / ns.weakenAnalyze(1);
+                
             }
-
-            var growThreadsNeeded   = ns.growthAnalyze(t, ns.getServerMaxMoney(t) / (ns.getServerMoneyAvailable(t)))
-            
-            var weakenThreadsNeeded = (
-                ns.getServerSecurityLevel(t) 
-                - ns.getServerMinSecurityLevel(t)
-                + ns.growthAnalyzeSecurity(growThreadsNeeded) * ns.getWeakenTime(t) / ns.getGrowTime(t)
-                + ns.hackAnalyzeSecurity(hackThreadsNeeded)   * ns.getWeakenTime(t) / ns.getHackTime(t)
-                + 1
-            ) / ns.weakenAnalyze(1);
-
 
             ns.print(
                 t.padStart(18)
