@@ -9,3 +9,7 @@ export async function main(ns) {
     }
     
 }
+/** @param {Data} data **/
+export function autocomplete (data,args) {
+    return [...data.scripts]
+}

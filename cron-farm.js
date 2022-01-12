@@ -20,6 +20,7 @@ export async function main(ns) {
         // weaken
         var targets = (await Servers.getServers(ns))
         .filter(s => ns.getServerMaxMoney(s))
+        .filter(s => ns.getServerMoneyAvailable(s)) // zero servers are quite dead. You can't grow those.
         .filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
         /*
         .sort((a,b) => 
@@ -31,19 +32,19 @@ export async function main(ns) {
         ;
         var limiter = 2;
         for (var t of targets) {
-            var hackThreadsNeeded = 0
-            var growThreadsNeeded = 0
-            var weakenThreadsNeeded = 0
+            try {
+                
+                var hackThreadsNeeded = 0
+                var growThreadsNeeded = 0
+                var weakenThreadsNeeded = 0
 
-            if (ns.hasRootAccess(t)) {
                 hackThreadsNeeded   = ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.05)
 
                 if (ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel()) {
                     hackThreadsNeeded = 0; // we can't hack this server
-                    //growThreadsNeeded = Math.max(growThreadsNeeded, 100) // cap at 100
                 }
 
-                growThreadsNeeded   = ns.growthAnalyze(t, ns.getServerMaxMoney(t) / (ns.getServerMoneyAvailable(t)))
+                growThreadsNeeded = ns.growthAnalyze(t, ns.getServerMaxMoney(t) / ns.getServerMoneyAvailable(t))
                 
                 weakenThreadsNeeded = (
                     ns.getServerSecurityLevel(t) 
@@ -52,27 +53,29 @@ export async function main(ns) {
                     + ns.hackAnalyzeSecurity(hackThreadsNeeded)   * ns.getWeakenTime(t) / ns.getHackTime(t)
                     + 1
                 ) / ns.weakenAnalyze(1);
-                
-            }
 
-            ns.print(
-                t.padStart(18)
-                + " " + hackThreadsNeeded.toFixed(2).padStart(10)
-                + " " + growThreadsNeeded.toFixed(2).padStart(10)
-                + " " + weakenThreadsNeeded.toFixed(2).padStart(10)
-            )
+                ns.print(
+                    t.padStart(18)
+                    + " " + hackThreadsNeeded.toFixed(2).padStart(10)
+                    + " " + growThreadsNeeded.toFixed(2).padStart(10)
+                    + " " + weakenThreadsNeeded.toFixed(2).padStart(10)
+                )
 
-            for (var w of workers) {
-                for (var ps of ns.ps(w)) {
-                    if (ps.filename == "cmd-weaken.js" && ps.args[0] == t) weakenThreadsNeeded -= ps.threads;
-                    if (ps.filename == "cmd-grow.js"   && ps.args[0] == t)   growThreadsNeeded -= ps.threads;
-                    if (ps.filename == "cmd-hack.js"   && ps.args[0] == t)   hackThreadsNeeded -= ps.threads;
+                for (var w of workers) {
+                    for (var ps of ns.ps(w)) {
+                        if (ps.filename == "cmd-weaken.js" && ps.args[0] == t) weakenThreadsNeeded -= ps.threads;
+                        if (ps.filename == "cmd-grow.js"   && ps.args[0] == t)   growThreadsNeeded -= ps.threads;
+                        if (ps.filename == "cmd-hack.js"   && ps.args[0] == t)   hackThreadsNeeded -= ps.threads;
+                    }
                 }
-            }
 
-            distribute(ns, workers, "cmd-weaken.js", weakenThreadsNeeded, t)
-            distribute(ns, workers, "cmd-hack.js"  , hackThreadsNeeded, t)
-            distribute(ns, workers, "cmd-grow.js"  , growThreadsNeeded, t)
+                distribute(ns, workers, "cmd-weaken.js", weakenThreadsNeeded, t)
+                distribute(ns, workers, "cmd-hack.js"  , hackThreadsNeeded, t)
+                distribute(ns, workers, "cmd-grow.js"  , growThreadsNeeded, t)
+            
+            } catch (ex) {
+                ns.print(ex);
+            }
         }
         await ns.sleep(100)
     }
