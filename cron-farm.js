@@ -34,8 +34,8 @@ export async function main(ns) {
             var hackThreadsNeeded = 0
             var growThreadsNeeded = 0
             var weakenThreadsNeeded = 0
-            
-            if (ns.hasRootAccess(t)) {}
+
+            if (ns.hasRootAccess(t)) {
                 hackThreadsNeeded   = ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.05)
 
                 if (ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel()) {
