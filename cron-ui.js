@@ -36,7 +36,7 @@ export async function main(ns) {
 
         headers.push("- Used");
         values.push(usedMemory.toFixed(2));
-
+        /*
         var shock = 0;
         var sync = 0;
         for (var i = 0; i < ns.sleeve.getNumSleeves(); i++) {
@@ -50,7 +50,7 @@ export async function main(ns) {
 
         headers.push("Sync");
         values.push(sync.toFixed(2));
-        
+        */
         // Now drop it into the placeholder elements
         hook0.innerText = headers.join("\n");
         hook0.style.paddingRight = "1em";
