@@ -9,8 +9,6 @@ export async function main(ns) {
         var reserve_money = Number.parseInt(await pmem.get(ns, "hacknet.reserve.money"))
         var reserve_hash = Number.parseInt(await pmem.get(ns, "hacknet.reserve.hashes"))
 
-        ns.tprint(reserve_money);
-        ns.tprint(reserve_hash);
         var cost = ns.hacknet.getPurchaseNodeCost()
         if (
             cost < ns.getPlayer().money - reserve_money
