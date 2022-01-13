@@ -15,6 +15,7 @@ export async function main(ns) {
             (ns.getServerMaxRam(b) - ns.getServerUsedRam(b)) -
             (ns.getServerMaxRam(a) - ns.getServerUsedRam(a))
         );
+
         for (var s of workers)
             await ns.scp(["cmd-hack.js", "cmd-weaken.js", "cmd-grow.js"], "home", s);
 
@@ -23,7 +24,7 @@ export async function main(ns) {
         .filter(s => ns.getServerMoneyAvailable(s)) // zero servers are quite dead. You can't grow those.
         .filter(s => ns.getServerMaxMoney(s))       // And we don't want to hit home.
         //.filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
-        .sort((a,b) => ns.getServerRequiredHackingLevel(a) - ns.getServerRequiredHackingLevel(b))
+        //.sort((a,b) => ns.getServerRequiredHackingLevel(a) - ns.getServerRequiredHackingLevel(b))
         .sort((a,b) => incomePerSec(ns,b) - incomePerSec(ns,a))
         ;
         var noMoreServers = false
@@ -66,6 +67,8 @@ export async function main(ns) {
                     + " " + hackThreadsNeeded.toFixed(2).padStart(10)
                     + " " + growThreadsNeeded.toFixed(2).padStart(10)
                     + " " + weakenThreadsNeeded.toFixed(2).padStart(10)
+                    + " " + weakenThreadsNeeded.toFixed(2).padStart(10)
+                    + " " + incomePerSec(ns, t).toFixed(2).padStart(6)
                 )
 
                 if (ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel() && growThreadsNeeded && weakenThreadsNeeded) {
@@ -96,7 +99,7 @@ export async function main(ns) {
 /** @param {import(".").NS} ns **/
 function incomePerSec(ns, s) {
     if (ns.getHackingLevel() < ns.getServerRequiredHackingLevel(s)) return 0;
-    return ns.getServerMoneyAvailable(s) / ns.getHackTime(s) * ns.hackAnalyze(s)
+    return ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) / ns.getHackTime(s) 
 }
 
 /** @param {import(".").NS} ns **/

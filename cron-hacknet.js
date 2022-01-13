@@ -1,14 +1,16 @@
 import * as pmem from "./lib-pmem.js"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
-    if (!await pmem.exists(ns, "hacknet.reserve.money"))  await pmem.set(ns, "player.reserve.money", 0)
-    if (!await pmem.exists(ns, "hacknet.reserve.hashes")) await pmem.set(ns, "player.reserve.hashes", 0)
+    if (!await pmem.exists(ns, "hacknet.reserve.money"))  await pmem.set(ns, "hacknet.reserve.money", 0)
+    if (!await pmem.exists(ns, "hacknet.reserve.hashes")) await pmem.set(ns, "hacknet.reserve.hashes", 0)
 
     while (true) {
         ns.clearLog()
         var reserve_money = Number.parseInt(await pmem.get(ns, "hacknet.reserve.money"))
         var reserve_hash = Number.parseInt(await pmem.get(ns, "hacknet.reserve.hashes"))
 
+        ns.tprint(reserve_money);
+        ns.tprint(reserve_hash);
         var cost = ns.hacknet.getPurchaseNodeCost()
         if (
             cost < ns.getPlayer().money - reserve_money
