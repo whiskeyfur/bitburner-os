@@ -108,6 +108,7 @@ function incomePerSec(ns, s) {
 
 /** @param {import(".").NS} ns **/
 function distribute(ns, workers, script, threadsNeeded, target) {
+    var reserve = await pmem.get(ns, "player.reserve.ram.home")
     if (threadsNeeded > 0) {
         for (var w of workers
                 .sort(
@@ -117,7 +118,12 @@ function distribute(ns, workers, script, threadsNeeded, target) {
                     )
                 )
         ) {
-            var memAvail = ns.getServerMaxRam(w) - (w == "home" ? 0 : 0) - ns.getServerUsedRam(w);
+            if (await pmem.exists("player.reserve.ram." + w))
+                var reserve = await pmem.get(ns, "player.reserve.ram." + w)
+            else   
+                var reserve = 0
+
+            var memAvail = (ns.getServerMaxRam(w) - reserve) - ns.getServerUsedRam(w);
             var threads = Math.max(Math.min(Math.floor(memAvail / ns.getScriptRam(script)), threadsNeeded),1);
             if ((threadsNeeded > 0) && (memAvail > ns.getScriptRam(script))) {
                 if (ns.exec(script, w, threads, target, ns.getTimeSinceLastAug())) {
