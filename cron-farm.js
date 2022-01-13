@@ -10,11 +10,7 @@ export async function main(ns) {
 
         var workers = (await Servers.getServers(ns))
         .filter(s => ns.hasRootAccess(s))
-        .filter(s => !s.startsWith("hacknet"))
-        .sort((a,b) => 
-            (ns.getServerMaxRam(b) - ns.getServerUsedRam(b)) -
-            (ns.getServerMaxRam(a) - ns.getServerUsedRam(a))
-        );
+        .filter(s => !s.startsWith("hacknet"));
 
         for (var s of workers)
             await ns.scp(["cmd-hack.js", "cmd-weaken.js", "cmd-grow.js"], "home", s);
@@ -24,8 +20,8 @@ export async function main(ns) {
         .filter(s => ns.getServerMoneyAvailable(s)) // zero servers are quite dead. You can't grow those.
         .filter(s => ns.getServerMaxMoney(s))       // And we don't want to hit home.
         //.filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
-        //.sort((a,b) => ns.getServerRequiredHackingLevel(a) - ns.getServerRequiredHackingLevel(b))
-        .sort((a,b) => incomePerSec(ns,b) - incomePerSec(ns,a))
+        .sort((a,b) => ns.getServerRequiredHackingLevel(b) - ns.getServerRequiredHackingLevel(a))
+        .sort((a,b) => jcw.incomePerSec(ns,a) - jcw.incomePerSec(ns,b))
         ;
         var noMoreServers = false
         ns.print(
@@ -94,12 +90,6 @@ export async function main(ns) {
         await ns.sleep(100)
     }
     
-}
-
-/** @param {import(".").NS} ns **/
-function incomePerSec(ns, s) {
-    if (ns.getHackingLevel() < ns.getServerRequiredHackingLevel(s)) return 0;
-    return ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) / ns.getHackTime(s) 
 }
 
 /** @param {import(".").NS} ns **/

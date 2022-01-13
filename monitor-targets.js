@@ -16,6 +16,7 @@ export async function main(ns) {
         .filter(s => ns.getServerMoneyAvailable(s))
         .filter(s => ns.getServerMaxMoney(s))
         .sort((a,b) => ns.getServerRequiredHackingLevel(b) - ns.getServerRequiredHackingLevel(a))
+        .sort((a,b) => jcw.incomePerSec(ns,a) - jcw.incomePerSec(ns,b))
         .forEach(s => 
             ns.print(
                 s.padStart(18) 
@@ -27,7 +28,7 @@ export async function main(ns) {
                 + " W: " + find(ns, s, servers, "cmd-weaken.js").toFixed(0).padStart(4)
                 + "  G: " + find(ns, s, servers, "cmd-grow.js").toFixed(0).padStart(4)
                 + "  H: " + find(ns, s, servers, "cmd-hack.js").toFixed(0).padStart(4)
-                + " -- " + ns.nFormat(incomePerSec(ns,s)).padStart(6)
+                + " -- " + ns.nFormat(jcw.incomePerSec(ns,s), "0.000a").padStart(6)
                 + "/sec/t  "
                 + ns.getServerRequiredHackingLevel(s).toFixed(0).padStart(4)
             )
@@ -49,8 +50,3 @@ function find(ns, server, workers, script) {
     return results;
 }
 
-/** @param {import(".").NS} ns **/
-function incomePerSec(ns, s) {
-    if (ns.getHackingLevel() < ns.getServerRequiredHackingLevel(s)) return 0;
-    return ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) / ns.getHackTime(s) 
-}

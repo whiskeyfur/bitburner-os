@@ -26,3 +26,12 @@ export async function targets(ns) {
     .filter(s => ns.getServerMoneyAvailable(s))
     .filter(s => ns.getServerRequiredHackingLevel(s) < ns.getHackingLevel(s))
 }
+
+/** @param {import(".").NS} ns **/
+export function incomePerSec(ns, s) {
+    if (ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(s) && ns.hasRootAccess(s))
+        return ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) / ns.getHackTime(s) 
+    else
+        return 0;
+        
+}
