@@ -9,6 +9,8 @@ export async function main(ns) {
         } else {
             mitigation = ""
         }
+        
+        data["log.gangs"] = ns.getScriptLogs()
     } else {
         data["cron.gangs"] = "ERR: Not in a gang"
     }

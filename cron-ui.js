@@ -38,6 +38,12 @@ export async function main(ns) {
 
         headers.push("Karma");
         values.push(ns.heart.break());
+
+        
+        if (data["hacknet.hashes"] !== null) {
+            headers.push("Hashes");
+            values.push(data["hacknet.hashes"]);
+        }
         /*
         var shock = 0;
         var sync = 0;

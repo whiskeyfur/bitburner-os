@@ -2,11 +2,15 @@ import * as jcw from "lib-servers.js"
 import {data} from "sys-database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
+    data["farm.hack.limit"] = data["farm.hack.limit"] ?? 0
+    data["farm.hack.enable"] = data["farm.hack.enable"] ?? true
+    data["farm.grow.limit"] = data["farm.grow.limit"] ?? 0
+    data["farm.grow.enable"] = data["farm.grow.enable"] ?? true
+    data["farm.weaken.limit"] = data["farm.weaken.limit"] ?? 0
+    data["farm.weaken.enable"] = data["farm.weaken.enable"] ?? true
+    
     ns.clearLog();
-    ns.tail();
     ns.disableLog("ALL");
-    var threadLimit = 999999;
-
     var workers = (await jcw.getServers(ns))
     .filter(s => ns.hasRootAccess(s));
 
@@ -51,6 +55,7 @@ export async function main(ns) {
                 hackThreadsNeeded = 0; // we can't hack this server
             }
 
+
             growThreadsNeeded = ns.growthAnalyze(t, ns.getServerMaxMoney(t) / ns.getServerMoneyAvailable(t))
             
             weakenThreadsNeeded = (
@@ -60,14 +65,22 @@ export async function main(ns) {
                 + ns.hackAnalyzeSecurity(hackThreadsNeeded)   * ns.getWeakenTime(t) / ns.getHackTime(t)
                 + 1
             ) / ns.weakenAnalyze(1);
+
+            if (data["farm.hack.limit"] > 0) hackThreadsNeeded = Math.min(hackThreadsNeeded, data["farm.hack.limit"])
+            if (data["farm.hack.enable"] == false) hackThreadsNeeded = 0;
+
+            if (data["farm.grow.limit"] > 0) growThreadsNeeded = Math.min(growThreadsNeeded, data["farm.grow.limit"]);
+            if (data["farm.grow.enable"] === false) growThreadsNeeded = 0;
+
+            if (data["farm.weaken.limit"] > 0) weakenThreadsNeeded = Math.min(weakenThreadsNeeded, data["farm.weaken.limit"]);
+            if (data["farm.weaken.enable"] === false) weakenThreadsNeeded = 0;
             
             ns.print(
                 t.padStart(18)
                 + " " + hackThreadsNeeded.toFixed(2).padStart(10)
                 + " " + growThreadsNeeded.toFixed(2).padStart(10)
                 + " " + weakenThreadsNeeded.toFixed(2).padStart(10)
-                + " " + weakenThreadsNeeded.toFixed(2).padStart(10)
-                + " " + jcw.incomePerSec(ns, t).toFixed(2).padStart(6)
+                + " " + (0).toFixed(2).padStart(6)
             )
 
             if (ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel() && growThreadsNeeded && weakenThreadsNeeded) {
@@ -89,6 +102,8 @@ export async function main(ns) {
         } catch (ex) {
             ns.print("EXCEPTION: " + ex);
         }
+        
+        data["log.farm"] = ns.getScriptLogs()
     }
     
 }

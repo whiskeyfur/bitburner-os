@@ -23,7 +23,7 @@ export async function main(ns) {
                 ns.tprint("Replaced '" + server + "' (" + ram+ " GB) with '" + host + "' (" + (ram * 2)+ " GB)")
             }
         }
-    } else {
+    } else if (ns.getPurchasedServerLimit() == 0) {
         // this bitnode doesn't support purchased servers...
         data["cron.servers"] = "ERR: Denied by Bitnode";
     }

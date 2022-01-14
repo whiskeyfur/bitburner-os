@@ -6,7 +6,6 @@ export async function main(ns) {
     if (data["hacknet.spend.on"] == null) data["hacknet.spend.on"] = "Sell for Money"
     
     //ns.clearLog()
-    ns.tail()
     var reserve_money  = data["hacknet.reserve.money"]  ?? 5e6
     var reserve_hashes = data["hacknet.reserve.hashes"] ?? 1e3
 
@@ -46,4 +45,7 @@ export async function main(ns) {
     if (ns.hacknet.numHashes() >= (4.00 + reserve_hashes)) {
         ns.hacknet.spendHashes(data["hacknet.spend.on"])
     }
+    data["hacknet.hashes"] = ns.hacknet.numHashes().toFixed(2)
+    data["log.hacknet"] = ns.getScriptLogs()
+    
 }
