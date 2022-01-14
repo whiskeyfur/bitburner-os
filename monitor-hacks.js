@@ -6,17 +6,13 @@ export async function main(ns) {
     while (true) {
         ns.clearLog();
 
-        
-
-
-
         var servers = await jcw.getServers(ns);
         servers
         .sort((a,b) => ns.getServerMaxMoney(a) - ns.getServerMaxMoney(b))
         .filter(s => ns.getServerMoneyAvailable(s))
         .filter(s => ns.getServerMaxMoney(s))
-        .sort((a,b) => ns.getServerRequiredHackingLevel(b) - ns.getServerRequiredHackingLevel(a))
-        .sort((a,b) => jcw.incomePerSec(ns,a) - jcw.incomePerSec(ns,b))
+        .filter(s => ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(s))
+        .sort((a,b) => (ns.getServerMoneyAvailable(b) * ns.hackAnalyze(b) * ns.hackAnalyzeChance(b)) - (ns.getServerMoneyAvailable(a) * ns.hackAnalyze(a) * ns.hackAnalyzeChance(a)))
         .forEach(s => 
             ns.print(
                 s.padStart(18) 
@@ -28,11 +24,9 @@ export async function main(ns) {
                 + " W: " + find(ns, s, servers, "cmd-weaken.js").toFixed(0).padStart(4)
                 + "  G: " + find(ns, s, servers, "cmd-grow.js").toFixed(0).padStart(4)
                 + "  H: " + find(ns, s, servers, "cmd-hack.js").toFixed(0).padStart(4)
-                + " -- " + ns.nFormat(jcw.incomePerSec(ns,s), "0.000a").padStart(6)
-                + "/sec/t  "
-                + ns.getServerRequiredHackingLevel(s).toFixed(0).padStart(4)
+                + " -- " + ns.nFormat(ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) * ns.hackAnalyzeChance(s), "0a").padStart(6)
+                + "/sec"
             )
-
         )
         await ns.sleep(1000)
     }

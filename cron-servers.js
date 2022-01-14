@@ -1,3 +1,4 @@
+import * as jcw from "./lib-common.js"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     var servers = ns.getPurchasedServers();
@@ -7,7 +8,7 @@ export async function main(ns) {
             var host = ns.purchaseServer("private", 8);
             ns.tprint("purchased new server '" + host + "' for " + cost)
         }
-    } else {
+    } else if (servers.length) {
         servers
         .sort()
         .sort((a,b) => ns.getServerMaxRam(a) - ns.getServerMaxRam(b))
@@ -22,5 +23,7 @@ export async function main(ns) {
                 ns.tprint("Replaced '" + server + "' (" + ram+ " GB) with '" + host + "' (" + (ram * 2)+ " GB)")
             }
         }
+    } else {
+        // this bitnode doesn't support purchased servers...
     }
 }

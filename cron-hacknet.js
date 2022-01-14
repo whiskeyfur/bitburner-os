@@ -1,16 +1,15 @@
-import * as pmem from "./lib-pmem.js"
-/** @param {import(".").NS} ns **/
+import {data} from "sys-database"
+/** @param {NS} ns **/
 export async function main(ns) {
-    if (!await pmem.exists(ns, "hacknet.reserve.money"))  await pmem.set(ns, "hacknet.reserve.money", 0)
-    if (!await pmem.exists(ns, "hacknet.reserve.hashes")) await pmem.set(ns, "hacknet.reserve.hashes", 0)
-
+    if (data["hacknet.reserve.money"] == null)  data["hacknet.reserve.money"] = 5e6
+    if (data["hacknet.reserve.hashes"] == null) data["hacknet.reserve.hashes"] = 1e3
     while (true) {
         ns.clearLog()
-        var reserve_money = Number.parseInt(await pmem.get(ns, "hacknet.reserve.money"))
-        var reserve_hash = Number.parseInt(await pmem.get(ns, "hacknet.reserve.hashes"))
+        var reserve_money  = data["hacknet.reserve.money"]  || 5e6
+        var reserve_hashes = data["hacknet.reserve.hashes"] || 1e3
 
         var cost = ns.hacknet.getPurchaseNodeCost()
-        if (
+        while (
             cost < ns.getPlayer().money - reserve_money
         ) {
             ns.tprint("Buying hacknet node for $" + cost.toFixed(2))
@@ -42,9 +41,11 @@ export async function main(ns) {
             }
             production += ns.hacknet.getNodeStats(i).production
         }
-        if (ns.hacknet.numHashes() >= (4.00 + reserve_hash)) {
+        if (ns.hacknet.numHashes() >= (4.00 + reserve_hashes)) {
+            
             ns.hacknet.spendHashes("Sell for Money")
         }
+        try{ ns.hacknet.spendHashes("Improve Studying");} catch {}
         await ns.sleep(1000)
     }
 }
