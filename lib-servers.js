@@ -1,4 +1,8 @@
 /** @param {import(".").NS} ns **/
+export async function main(ns) {
+    // ns.tprint(await getServers(ns))
+}
+/** @param {import(".").NS} ns **/
 export async function getServers(ns) {
     const nodes = new Set
     function dfs(node) {
@@ -17,20 +21,20 @@ export async function getServers(ns) {
 /** @param {import(".").NS} ns **/
 export async function workers(ns) {
     return await getServers(ns)
-    .filter(s => ns.hasRootAccess(s))
+    .filter(svr => ns.hasRootAccess(svr))
 }
 
 /** @param {import(".").NS} ns **/
 export async function targets(ns) {
     return await getServers(ns)
-    .filter(s => ns.getServerMoneyAvailable(s))
-    .filter(s => ns.getServerRequiredHackingLevel(s) < ns.getHackingLevel(s))
+    .filter(svrt => ns.getServerMoneyAvailable(svrt))
+    .filter(svrt => ns.getServerRequiredHackingLevel(svrt) < ns.getHackingLevel(svrt))
 }
 
 /** @param {import(".").NS} ns **/
-export function incomePerSec(ns, s) {
-    if (ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(s) && ns.hasRootAccess(s))
-        return ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) / ns.getHackTime(s) 
+export function incomePerSec(ns, sinc) {
+    if (ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(sinc) && ns.hasRootAccess(sinc))
+        return ns.getServerMoneyAvailable(sinc) * ns.hackAnalyze(sinc) / ns.getHackTime(sinc) 
     else
         return 0;
         

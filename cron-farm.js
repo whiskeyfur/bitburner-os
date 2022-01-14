@@ -3,6 +3,7 @@ import {data} from "sys-database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     ns.clearLog();
+    ns.tail();
     ns.disableLog("ALL");
     var threadLimit = 999999;
 
@@ -22,7 +23,7 @@ export async function main(ns) {
     .filter(s => ns.getServerMaxMoney(s))       // And we don't want to hit home.
     //.filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
     .sort((a,b) => ns.getServerRequiredHackingLevel(b) - ns.getServerRequiredHackingLevel(a))
-    .sort((a,b) => jcw.incomePerSec(ns,a) - jcw.incomePerSec(ns,b))
+    .sort((a,b) => jcw.incomePerSec(ns,b) - jcw.incomePerSec(ns,a))
     ;
     ns.print("targets: " + targets.length);
     var noMoreServers = false
@@ -44,8 +45,8 @@ export async function main(ns) {
             hackThreadsNeeded   = ns.hackAnalyzeThreads(t, ns.getServerMoneyAvailable(t) * 0.05)
 
             if (
-                ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel() ||
-                ns.getServerMoneyAvailable(t) < ns.getServerMaxMoney(t) / 2
+                (ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel()) ||
+                (ns.getServerMoneyAvailable(t) < (ns.getServerMaxMoney(t) * 0.95))
             ) {
                 hackThreadsNeeded = 0; // we can't hack this server
             }
@@ -59,14 +60,14 @@ export async function main(ns) {
                 + ns.hackAnalyzeSecurity(hackThreadsNeeded)   * ns.getWeakenTime(t) / ns.getHackTime(t)
                 + 1
             ) / ns.weakenAnalyze(1);
-
+            
             ns.print(
                 t.padStart(18)
                 + " " + hackThreadsNeeded.toFixed(2).padStart(10)
                 + " " + growThreadsNeeded.toFixed(2).padStart(10)
                 + " " + weakenThreadsNeeded.toFixed(2).padStart(10)
                 + " " + weakenThreadsNeeded.toFixed(2).padStart(10)
-                + " " + incomePerSec(ns, t).toFixed(2).padStart(6)
+                + " " + jcw.incomePerSec(ns, t).toFixed(2).padStart(6)
             )
 
             if (ns.getServerRequiredHackingLevel(t) > ns.getHackingLevel() && growThreadsNeeded && weakenThreadsNeeded) {
@@ -86,7 +87,7 @@ export async function main(ns) {
             distribute(ns, workers, "cmd-grow.js"  , growThreadsNeeded, t)
         
         } catch (ex) {
-            ns.print(ex);
+            ns.print("EXCEPTION: " + ex);
         }
     }
     
@@ -104,7 +105,7 @@ function distribute(ns, workers, script, threadsNeeded, target) {
                 )
         ) {
 
-            var memAvail = (data["farm." + s + ".use"] ?? ns.getServerMaxRam(w)) - ns.getServerUsedRam(w);
+            var memAvail = (data["farm." + w + ".use"] ?? ns.getServerMaxRam(w)) - ns.getServerUsedRam(w);
             var threads = Math.max(Math.min(Math.floor(memAvail / ns.getScriptRam(script)), threadsNeeded),1);
             if ((threadsNeeded > 0) && (memAvail > ns.getScriptRam(script))) {
                 if (ns.exec(script, w, threads, target, ns.getTimeSinceLastAug())) {

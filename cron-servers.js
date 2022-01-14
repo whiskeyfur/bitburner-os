@@ -1,4 +1,4 @@
-import * as jcw from "./lib-common.js"
+import {data} from "sys-database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     var servers = ns.getPurchasedServers();
@@ -25,5 +25,6 @@ export async function main(ns) {
         }
     } else {
         // this bitnode doesn't support purchased servers...
+        data["cron.servers"] = "ERR: Denied by Bitnode";
     }
 }

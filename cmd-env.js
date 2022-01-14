@@ -14,6 +14,8 @@ export async function main(ns) {
                 ns.tprint("Not a valid setting")
         } else if (ns.args[0] == "add") {
             data[ns.args[1]] = ns.args[2]
+        } else if (ns.args[0] == "unset") {
+            delete(data[ns.args[1]])
         }
     }
 }

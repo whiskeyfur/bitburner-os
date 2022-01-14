@@ -21,7 +21,7 @@ export async function main(ns) {
         (await lib.getServers(ns))
         .filter(s => ns.hasRootAccess(s))
         .map(s => {
-            totalMemory += ns.getServerMaxRam(s) - (s == "home" ? 256 : 0);
+            totalMemory += ns.getServerMaxRam(s);
             for (var ps of ns.ps(s)) {
                 if (ps.filename.startsWith("cmd-"))
                     usedMemory += ns.getScriptRam(ps.filename, s) * ps.threads;

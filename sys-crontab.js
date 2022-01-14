@@ -3,7 +3,7 @@ import {data} from "./sys-database.js"
 export async function main(ns) {
     
     while (true) {
-        await ns.asleep(1000)
+        await ns.asleep(100)
         .then(result => {
             ns.clearLog()
             var files = (ns.ls("home", ".js")).filter(f => f.startsWith("cron-"));
@@ -12,7 +12,10 @@ export async function main(ns) {
                 if(!data[param])
                     data[param] = false
 
-                if (data[param] && !ns.scriptRunning(f, ns.getHostname())) {
+                if (ns.getScriptRam(f) > ns.getServerMaxRam("home") - ns.getServerUsedRam("home"))
+                    data[param] = "ERR: Not enough memory"
+
+                if ((data[param] === true) && !ns.scriptRunning(f, ns.getHostname())) {
                     var pid = ns.exec(f, ns.getHostname());        
                 }
             });
