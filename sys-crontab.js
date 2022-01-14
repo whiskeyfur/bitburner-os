@@ -12,7 +12,7 @@ export async function main(ns) {
                 if(!data[param])
                     data[param] = false
 
-                if (ns.getScriptRam(f) > ns.getServerMaxRam("home") - ns.getServerUsedRam("home"))
+                if (ns.getScriptRam(f) > (ns.getServerMaxRam("home") - ns.getScriptRam("sys-crontab.ns")))
                     data[param] = "ERR: Not enough memory"
 
                 if ((data[param] === true) && !ns.scriptRunning(f, ns.getHostname())) {

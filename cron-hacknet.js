@@ -3,10 +3,12 @@ import {data} from "sys-database"
 export async function main(ns) {
     if (data["hacknet.reserve.money"] == null)  data["hacknet.reserve.money"] = 5e6
     if (data["hacknet.reserve.hashes"] == null) data["hacknet.reserve.hashes"] = 1e3
+    if (data["hacknet.spend.on"] == null) data["hacknet.spend.on"] = "Sell for Money"
+    
     //ns.clearLog()
     ns.tail()
-    var reserve_money  = data["hacknet.reserve.money"]  || 5e6
-    var reserve_hashes = data["hacknet.reserve.hashes"] || 1e3
+    var reserve_money  = data["hacknet.reserve.money"]  ?? 5e6
+    var reserve_hashes = data["hacknet.reserve.hashes"] ?? 1e3
 
     var cost = ns.hacknet.getPurchaseNodeCost()
     while (
@@ -42,8 +44,6 @@ export async function main(ns) {
         production += ns.hacknet.getNodeStats(i).production
     }
     if (ns.hacknet.numHashes() >= (4.00 + reserve_hashes)) {
-        
-        ns.hacknet.spendHashes("Sell for Money")
+        ns.hacknet.spendHashes(data["hacknet.spend.on"])
     }
-    try{ ns.hacknet.spendHashes("Improve Studying");} catch {}
 }

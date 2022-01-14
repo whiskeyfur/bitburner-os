@@ -1,3 +1,4 @@
+import {data} from "./sys-database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     if (ns.gang.inGang()) {
@@ -8,5 +9,7 @@ export async function main(ns) {
         } else {
             mitigation = ""
         }
+    } else {
+        data["cron.gangs"] = "ERR: Not in a gang"
     }
 }

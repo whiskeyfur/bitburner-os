@@ -7,7 +7,7 @@ export async function main(ns) {
 	}
 	while (true) {
 		ns.clearLog();
-		for (var key of Object.keys(data)) {
+		for (var key of Object.keys(data).sort()) {
 			ns.print(
 				key.padEnd(25, "_")
 				+ " " 

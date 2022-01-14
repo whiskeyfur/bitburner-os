@@ -1,5 +1,4 @@
-import * as lib from "./lib-servers.js"
-
+import {data} from "./sys-database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     const doc = document; // This is expensive! (25GB RAM) Perhaps there's a way around it? ;)
@@ -18,10 +17,10 @@ export async function main(ns) {
 
         var totalMemory = 0;
         var usedMemory = 0;
-        (await lib.getServers(ns))
+        Object.keys(data["data.servers"])
         .filter(s => ns.hasRootAccess(s))
         .map(s => {
-            totalMemory += ns.getServerMaxRam(s);
+            totalMemory += data["data.servers"][s].maxRam;
             for (var ps of ns.ps(s)) {
                 if (ps.filename.startsWith("cmd-"))
                     usedMemory += ns.getScriptRam(ps.filename, s) * ps.threads;
@@ -36,6 +35,9 @@ export async function main(ns) {
 
         headers.push("- Used");
         values.push(usedMemory.toFixed(2));
+
+        headers.push("Karma");
+        values.push(ns.heart.break());
         /*
         var shock = 0;
         var sync = 0;
