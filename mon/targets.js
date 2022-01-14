@@ -1,19 +1,18 @@
-import {data} from "/sys/database"
+import * as db from "/sys/database"
 import * as farm from "/lib/farm"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     ns.tail();
-    ns.disableLog("ALL");
+    ns.disableLog("ALL")
+    ns.clearLog()
     while (true) {
         ns.clearLog();
-        await ns.sleep(1000)
-        ns.tprint(data["servers"])
-        var servers = Object.keys(data["servers"]);
+        var servers = Object.keys(db.get("servers"));
+        ns.tprint(servers);
         servers
-        .sort((a,b) => ns.getServerMaxMoney(a) - ns.getServerMaxMoney(b))
         .filter(s => ns.getServerMoneyAvailable(s))
         .filter(s => ns.getServerMaxMoney(s))
-        .sort((a,b) => ns.getServerRequiredHackingLevel(b) - ns.getServerRequiredHackingLevel(a))
+        .sort((a,b) => farm.incomePerSec(b) - farm.incomePerSec(a))
         .forEach(s => 
             ns.print(
                 s.padStart(18) 
@@ -31,6 +30,7 @@ export async function main(ns) {
             )
 
         );
+        await ns.sleep(1000)
     }
 }
 

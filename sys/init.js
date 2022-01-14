@@ -1,16 +1,20 @@
-import {data} from "/sys/database"
+import * as db from "/sys/database"
 /** @param {NS} ns **/
 export async function main(ns) {
     let queue = ["home"];
-	data["servers"] = {};
-    while (queue.length) {
+    let data = {}
+	while (queue.length) {
         let s = queue.pop();
-        if (!data["servers"][s]) {
-            data["servers"][s] = ns.getServer(s);
+        if (data[s] === null) {
+            let svrinfo = ns.getServer(s)
             let links = ns.scan(s);
-            data["servers"][s]["links"] = links;
+            svrinfo.links = links
+            data[s] = svrinfo;
             for (let l of links) queue.unshift(l);
         }
+
     }
+    db.set("servers", data)
     
+    await ns.write("/logs/sys/init.txt", ns.getScriptLogs().join("\n"), "w")
 }

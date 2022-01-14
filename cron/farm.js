@@ -1,30 +1,32 @@
-import {data} from "/sys/database"
+import * as db from "/sys/database"
 import * as farm from "/lib/farm"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
-    data["farm.hack.limit"] = data["farm.hack.limit"] ?? 0
-    data["farm.hack.enable"] = data["farm.hack.enable"] ?? true
-    data["farm.grow.limit"] = data["farm.grow.limit"] ?? 0
-    data["farm.grow.enable"] = data["farm.grow.enable"] ?? true
-    data["farm.weaken.limit"] = data["farm.weaken.limit"] ?? 0
-    data["farm.weaken.enable"] = data["farm.weaken.enable"] ?? true
+    for (let p of ["hack", "grow", "weaken"]) {
+        db.get(`farm.${p}.limit`) ?? db.set(`farm.${p}.limit`, 0)
+        db.get(`farm.${p}.enable`) ?? db.set(`farm.${p}.enable`, true)
+    }
     
     ns.clearLog();
     ns.disableLog("ALL");
-    var workers = Object.keys(data["servers"])
+    ns.tprint(db.get("servers"))
+    var workers = Object.keys(db.get("servers") ?? {})
     .filter(s => ns.hasRootAccess(s));
 
     for (var s of workers) {
-        if (s.startsWith("hacknet") || s == "home") {
-            data["farm." + s + ".use"] = data["farm." + s + ".use"] ?? 0;
+        let param = "farm." + s + ".use"
+        if (s.startsWith("hacknet") || s == "home")
+        if (db.get(param) === null) {
+            db.set(param, 0);
         }
-        await ns.scp(["/cmd/hack.js", "/cmd/weaken.js", "/cmd/grow.js"], "home", s);   
+        if (s != "home") await ns.scp(["/cmd/hack.js", "/cmd/weaken.js", "/cmd/grow.js"], "home", s);   
     }
 
     // weaken
-    var targets = Object.keys(data["servers"])
+    var targets = Object.keys(db.get("servers"))
     .filter(s => ns.getServerMoneyAvailable(s)) // zero servers are quite dead. You can't grow those.
     .filter(s => ns.getServerMaxMoney(s))       // And we don't want to hit home.
+    .filter(s => ns.hasRootAccess(s))       // And we don't want to hit home.
     //.filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
     .sort((a,b) => ns.getServerRequiredHackingLevel(b) - ns.getServerRequiredHackingLevel(a))
     .sort((a,b) => farm.incomePerSec(ns,b) - farm.incomePerSec(ns,a))
@@ -66,14 +68,14 @@ export async function main(ns) {
                 + 1
             ) / ns.weakenAnalyze(1);
 
-            if (data["farm.hack.limit"] > 0) hackThreadsNeeded = Math.min(hackThreadsNeeded, data["farm.hack.limit"])
-            if (data["farm.hack.enable"] == false) hackThreadsNeeded = 0;
+            if (db.get("farm.hack.limit") > 0) hackThreadsNeeded = Math.min(hackThreadsNeeded, db.get("farm.hack.limit"))
+            if (db.get("farm.hack.enable") == false) hackThreadsNeeded = 0;
 
-            if (data["farm.grow.limit"] > 0) growThreadsNeeded = Math.min(growThreadsNeeded, data["farm.grow.limit"]);
-            if (data["farm.grow.enable"] === false) growThreadsNeeded = 0;
+            if (db.get("farm.grow.limit") > 0) growThreadsNeeded = Math.min(growThreadsNeeded, db.get("farm.grow.limit"));
+            if (db.get("farm.grow.enable") === false) growThreadsNeeded = 0;
 
-            if (data["farm.weaken.limit"] > 0) weakenThreadsNeeded = Math.min(weakenThreadsNeeded, data["farm.weaken.limit"]);
-            if (data["farm.weaken.enable"] === false) weakenThreadsNeeded = 0;
+            if (db.get("farm.weaken.limit") > 0) weakenThreadsNeeded = Math.min(weakenThreadsNeeded, db.get("farm.weaken.limit"));
+            if (db.get("farm.weaken.enable") === false) weakenThreadsNeeded = 0;
             
             ns.print(
                 t.padStart(18)
@@ -103,7 +105,7 @@ export async function main(ns) {
             ns.print("EXCEPTION: " + ex);
         }
         
-        data["log.farm"] = ns.getScriptLogs()
+        await ns.write("/logs/cron/farm.txt", ns.getScriptLogs().join("\n"))
     }
     
 }
