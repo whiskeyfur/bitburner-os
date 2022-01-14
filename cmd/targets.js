@@ -1,7 +1,7 @@
-import * as Svrs from "./lib-servers.js"
+import {data} from "/sys.database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
-  var servers = await Svrs.getServers(ns);
+  var servers = Object.keys(data["servers"]);
   servers.sort((a,b) => incomePerSecond(ns,a) - incomePerSecond(ns,b))
   servers
   .filter(s => ns.getServerMoneyAvailable(s))

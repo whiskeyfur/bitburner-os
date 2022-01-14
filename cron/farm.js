@@ -1,5 +1,5 @@
-import * as jcw from "lib-servers.js"
-import {data} from "sys-database"
+import {data} from "/sys/database"
+import * as farm from "/lib/farm"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     data["farm.hack.limit"] = data["farm.hack.limit"] ?? 0
@@ -11,23 +11,23 @@ export async function main(ns) {
     
     ns.clearLog();
     ns.disableLog("ALL");
-    var workers = (await jcw.getServers(ns))
+    var workers = Object.keys(data["servers"])
     .filter(s => ns.hasRootAccess(s));
 
     for (var s of workers) {
         if (s.startsWith("hacknet") || s == "home") {
             data["farm." + s + ".use"] = data["farm." + s + ".use"] ?? 0;
         }
-        await ns.scp(["cmd-hack.js", "cmd-weaken.js", "cmd-grow.js"], "home", s);   
+        await ns.scp(["/cmd/hack.js", "/cmd/weaken.js", "/cmd/grow.js"], "home", s);   
     }
 
     // weaken
-    var targets = (await jcw.getServers(ns))
+    var targets = Object.keys(data["servers"])
     .filter(s => ns.getServerMoneyAvailable(s)) // zero servers are quite dead. You can't grow those.
     .filter(s => ns.getServerMaxMoney(s))       // And we don't want to hit home.
     //.filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
     .sort((a,b) => ns.getServerRequiredHackingLevel(b) - ns.getServerRequiredHackingLevel(a))
-    .sort((a,b) => jcw.incomePerSec(ns,b) - jcw.incomePerSec(ns,a))
+    .sort((a,b) => farm.incomePerSec(ns,b) - farm.incomePerSec(ns,a))
     ;
     ns.print("targets: " + targets.length);
     var noMoreServers = false
@@ -89,15 +89,15 @@ export async function main(ns) {
 
             for (var w of workers) {
                 for (var ps of ns.ps(w)) {
-                    if (ps.filename == "cmd-weaken.js" && ps.args[0] == t) weakenThreadsNeeded -= ps.threads;
-                    if (ps.filename == "cmd-grow.js"   && ps.args[0] == t)   growThreadsNeeded -= ps.threads;
-                    if (ps.filename == "cmd-hack.js"   && ps.args[0] == t)   hackThreadsNeeded -= ps.threads;
+                    if (ps.filename == "/cmd/weaken.js" && ps.args[0] == t) weakenThreadsNeeded -= ps.threads;
+                    if (ps.filename == "/cmd/grow.js"   && ps.args[0] == t)   growThreadsNeeded -= ps.threads;
+                    if (ps.filename == "/cmd/hack.js"   && ps.args[0] == t)   hackThreadsNeeded -= ps.threads;
                 }
             }
         
-            distribute(ns, workers, "cmd-weaken.js", weakenThreadsNeeded, t)
-            distribute(ns, workers, "cmd-hack.js"  , hackThreadsNeeded, t)
-            distribute(ns, workers, "cmd-grow.js"  , growThreadsNeeded, t)
+            distribute(ns, workers, "/cmd/weaken.js", weakenThreadsNeeded, t)
+            distribute(ns, workers, "/cmd/hack.js"  , hackThreadsNeeded, t)
+            distribute(ns, workers, "/cmd/grow.js"  , growThreadsNeeded, t)
         
         } catch (ex) {
             ns.print("EXCEPTION: " + ex);

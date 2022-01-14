@@ -1,4 +1,4 @@
-import * as jcw from "./lib-servers.js"
+import {data} from "/sys/database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     ns.tail();
@@ -7,9 +7,7 @@ export async function main(ns) {
         ns.clearLog();
 
         var procs = []
-        var servers = await jcw.getServers(ns);
-
-        servers
+        Object.keys(data["servers"])
         .forEach(s => {
             for (var ps of ns.ps(s)) procs.push({"file": ps.filename, "threads": ps.threads, "target": ps.args[0], "started": ps.args[1], "pid" : ps.pid, "host" : s})
         })

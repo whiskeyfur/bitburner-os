@@ -1,4 +1,4 @@
-import {data} from "./sys-database"
+import {data} from "/sys/database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     if (ns.gang.inGang()) {

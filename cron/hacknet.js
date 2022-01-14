@@ -1,4 +1,4 @@
-import {data} from "sys-database"
+import {data} from "/sys/database"
 /** @param {NS} ns **/
 export async function main(ns) {
     if (data["hacknet.reserve.money"] == null)  data["hacknet.reserve.money"] = 5e6

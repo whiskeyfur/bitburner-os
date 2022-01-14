@@ -1,15 +1,15 @@
 //import * as jcw from "./lib-servers.js"
-import {data} from "./sys-database"
+import {data} from "/sys/database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     ns.clearLog()
     ns.disableLog("ALL")
     let files = [
-        ["brutessh.exe", ns.brutessh],
-        ["ftpcrack.exe", ns.ftpcrack],
-        ["relaysmtp.exe", ns.relaysmtp],
-        ["httpworm.exe", ns.httpworm],
-        ["sqlinject.exe", ns.sqlinject]
+        ["/brutessh.exe", ns.brutessh],
+        ["/ftpcrack.exe", ns.ftpcrack],
+        ["/relaysmtp.exe", ns.relaysmtp],
+        ["/httpworm.exe", ns.httpworm],
+        ["/sqlinject.exe", ns.sqlinject]
     ].filter(f => ns.fileExists(f[0], "home"))
 
     var servers = Object.keys(data["data.servers"])

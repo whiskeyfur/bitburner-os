@@ -1,7 +1,7 @@
-import * as Svrs from "./lib-servers.js"
+import {data} from "/sys/database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
-    var servers = (await Svrs.getServers(ns))
+    var servers = Object.keys(data["servers"])
     .filter(s => s != "home");
     ns.tprint(servers.length);
     for (var s of servers) {

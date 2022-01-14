@@ -1,8 +1,8 @@
-import * as Svrs from "lib-servers.js"
+import {data} from "/sys/database"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
   var info = {"orgs" : {}, "servers" : {}}
-  var servers = await Svrs.getServers(ns);
+  var servers = Object.keys(data["servers"]);
   for (var hostname of servers) {
     var server = ns.getServer(hostname);
     var org = server.organizationName;

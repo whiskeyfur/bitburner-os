@@ -1,13 +1,12 @@
-import * as jcw from "./lib-servers.js"
-/** @param {import(".").NS} ns **/
+import {data} from "/sys/database"
+/** @param {import("..").NS} ns **/
 export async function main(ns) {
     ns.tail();
     ns.disableLog("ALL");
     while (true) {
         ns.clearLog();
 
-        var servers = await jcw.getServers(ns);
-        servers
+        var servers = Object.keys(data["servers"])
         .sort((a,b) => ns.getServerMaxMoney(a) - ns.getServerMaxMoney(b))
         .filter(s => ns.getServerMoneyAvailable(s))
         .filter(s => ns.getServerMaxMoney(s))
@@ -21,9 +20,9 @@ export async function main(ns) {
                 + " / "
                 + ns.nFormat(ns.getServerMaxMoney(s), "0a").padStart(6)
                 + " -- "
-                + " W: " + find(ns, s, servers, "cmd-weaken.js").toFixed(0).padStart(4)
-                + "  G: " + find(ns, s, servers, "cmd-grow.js").toFixed(0).padStart(4)
-                + "  H: " + find(ns, s, servers, "cmd-hack.js").toFixed(0).padStart(4)
+                + " W: " + find(ns, s, servers, "/cmd/weaken.js").toFixed(0).padStart(4)
+                + "  G: " + find(ns, s, servers, "/cmd/grow.js").toFixed(0).padStart(4)
+                + "  H: " + find(ns, s, servers, "/cmd/hack.js").toFixed(0).padStart(4)
                 + " -- " + ns.nFormat(ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) * ns.hackAnalyzeChance(s), "0a").padStart(6)
                 + "/sec"
             )
@@ -32,7 +31,7 @@ export async function main(ns) {
     }
 }
 
-/** @param {import(".").NS} ns **/
+/** @param {import("..").NS} ns **/
 function find(ns, server, workers, script) {
     var results = 0;
     for (var w of workers) {

@@ -1,8 +1,8 @@
 export const data = {}
 /** @param {NS} ns **/
 export async function main(ns) {
-	if (ns.fileExists("database.txt")) {
-		var d = JSON.parse(ns.read("database.txt"));
+	if (ns.fileExists("/data/state.txt")) {
+		var d = JSON.parse(ns.read("/data/state.txt"));
 		for (var k of Object.keys(d)) data[k] = d[k];
 	}
 	while (true) {
@@ -14,7 +14,7 @@ export async function main(ns) {
 				+ JSON.stringify(data[key])
 			);
 		}
-		await ns.write("database.txt", JSON.stringify(data, null, 2), "w")
+		await ns.write("/data/state.txt", JSON.stringify(data, null, 2), "w")
 		await ns.sleep(1000)
 	}
 }

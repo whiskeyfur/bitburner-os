@@ -1,17 +1,18 @@
-import * as jcw from "./lib-servers.js"
+import {data} from "/sys/database"
+import * as farm from "/lib/farm"
 /** @param {import(".").NS} ns **/
 export async function main(ns) {
     ns.tail();
     ns.disableLog("ALL");
     while (true) {
         ns.clearLog();
-
-        
-
-
-
-        var servers = await jcw.getServers(ns);
+        await ns.sleep(1000)
+        ns.tprint(data["servers"])
+        var servers = Object.keys(data["servers"]);
         servers
+        .sort((a,b) => ns.getServerMaxMoney(a) - ns.getServerMaxMoney(b))
+        .filter(s => ns.getServerMoneyAvailable(s))
+        .filter(s => ns.getServerMaxMoney(s))
         .sort((a,b) => ns.getServerRequiredHackingLevel(b) - ns.getServerRequiredHackingLevel(a))
         .forEach(s => 
             ns.print(
@@ -21,20 +22,15 @@ export async function main(ns) {
                 + " / "
                 + ns.nFormat(ns.getServerMaxMoney(s), "0a").padStart(6)
                 + " -- "
-                + " W: " + find(ns, s, servers, "cmd-weaken.js").toFixed(0).padStart(4)
-                + "  G: " + find(ns, s, servers, "cmd-grow.js").toFixed(0).padStart(4)
-                + "  H: " + find(ns, s, servers, "cmd-hack.js").toFixed(0).padStart(4)
+                + " W: " + find(ns, s, servers, "/cmd/weaken.js").toFixed(0).padStart(4)
+                + "  G: " + find(ns, s, servers, "/cmd/grow.js").toFixed(0).padStart(4)
+                + "  H: " + find(ns, s, servers, "/cmd/hack.js").toFixed(0).padStart(4)
+                + " -- " + ns.nFormat(farm.incomePerSec(ns,s), "0.000a").padStart(6)
+                + "/sec/t  "
                 + ns.getServerRequiredHackingLevel(s).toFixed(0).padStart(4)
-                + " -- " + (ns.getServerMoneyAvailable(s) ? 
-                    ns.nFormat(ns.getServerMoneyAvailable(s) * ns.hackAnalyze(s) * ns.hackAnalyzeChance(s), "0a").padStart(6)
-                    + "/sec/t  "
-                    : ""
-                )
-                
             )
 
-        )
-        await ns.sleep(1000)
+        );
     }
 }
 

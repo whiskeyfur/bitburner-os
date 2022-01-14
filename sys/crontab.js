@@ -1,5 +1,5 @@
-import {data} from "./sys-database.js"
-/** @param {import(".").NS} ns **/
+import {data} from "/sys/database"
+/** @param {import("..").NS} ns **/
 export async function main(ns) {
     ns.disableLog("ALL")
     while (true) {
